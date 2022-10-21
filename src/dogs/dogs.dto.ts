@@ -1,7 +1,14 @@
-import { Dog } from './dogs.interface';
+import { IsString, IsNumber } from 'class-validator';
 
-export class CreateDogDto implements Dog {
+export class DogDto {
+  id: number;
+
+  @IsString()
   name: string;
+
+  @IsNumber()
   age: number;
+
+  @IsString()
   breed: string;
 }

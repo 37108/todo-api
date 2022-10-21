@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import initSqlJs from 'sql.js';
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -12,9 +13,10 @@ async function bootstrap() {
   const buffer = fs.readFileSync('db.sqlite');
   const sql = await initSqlJs();
   const db = new sql.Database(buffer);
-  db.run('CREATE TABLE dogs (name, age, breed);');
+  db.run('CREATE TABLE dog (id, name, age, breed);');
 
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
 bootstrap();

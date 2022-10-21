@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Dog } from './dogs.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Dog } from './dogs.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DogsService {
-  private readonly dogs: Dog[] = [];
+  constructor(
+    @InjectRepository(Dog)
+    private dogsRepository: Repository<Dog>,
+  ) {}
 
   create(dog: Dog) {
-    this.dogs.push(dog);
+    this.dogsRepository.save(dog);
   }
-  findAll(): Dog[] {
-    return this.dogs;
+  findAll(): Promise<Dog[]> {
+    return this.dogsRepository.find();
   }
 }
