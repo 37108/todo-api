@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DogsModule } from './dogs/dogs.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DogsModule } from './dogs/dogs.module';
      * User Defined Modules
      */
     DogsModule,
+    TasksModule,
   ],
   controllers: [],
   providers: [],

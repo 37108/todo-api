@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DogsController } from './dogs.controller';
 import { DogsService } from './dogs.service';
 import { Dog } from './dogs.entity';
 
@@ -11,7 +10,7 @@ describe('Dogs Service', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      controllers: [DogsController],
+      controllers: [],
       providers: [
         DogsService,
         {
