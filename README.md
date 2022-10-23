@@ -14,6 +14,9 @@ $ yarn
 # development
 $ yarn start
 
+# access to API definition
+http://localhost:3000/api
+
 # watch mode
 $ yarn start:dev
 
