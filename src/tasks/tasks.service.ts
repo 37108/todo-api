@@ -10,23 +10,23 @@ export class TasksService {
     private repository: Repository<Task>,
   ) {}
 
-  create(task: Task) {
-    this.repository.save(task);
+  async create(task: Task) {
+    await this.repository.save(task);
   }
-  update(task: Task) {
+  async update(task: Task) {
     this.repository.update({ id: task.id }, task);
   }
-  delete(id: string) {
+  async delete(id: string) {
     this.repository.softDelete({ id });
   }
 
-  find(id: string): Promise<Task> {
+  async find(id: string): Promise<Task | null> {
     return this.repository.findOneBy({ id });
   }
-  findAll(): Promise<Task[]> {
+  async findAll(): Promise<Task[]> {
     return this.repository.find();
   }
-  findByStatus(status: string): Promise<Task[]> {
+  async findByStatus(status: string): Promise<Task[]> {
     return this.repository.findBy({ status });
   }
 }

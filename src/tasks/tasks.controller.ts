@@ -8,11 +8,16 @@ import {
   Put,
   HttpException,
   HttpStatus,
+  NotFoundException,
+  InternalServerErrorException,
+  UseFilters,
 } from '@nestjs/common';
+import { QueryFailedError } from 'typeorm';
+import { v4 } from 'uuid';
 import { Task } from './tasks.entity';
 import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
 import { TasksService } from './tasks.service';
-import { v4 } from 'uuid';
+import { QueryFailedExceptionFilter } from './tasks.filter';
 
 @Controller('tasks')
 export class TasksController {
@@ -20,11 +25,21 @@ export class TasksController {
 
   @Get()
   async findAll(): Promise<Task[]> {
-    return this.tasksService.findAll();
+    try {
+      return this.tasksService.findAll();
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
+
   @Post()
+  @UseFilters(new QueryFailedExceptionFilter())
   async create(@Body() body: CreateTaskDto) {
-    this.tasksService.create({
+    await this.tasksService.create({
       ...body,
       id: v4(),
       description: body.description ?? '',
@@ -38,7 +53,19 @@ export class TasksController {
 
   @Get(':id')
   async find(@Param('id') id: string): Promise<Task> {
-    return this.tasksService.find(id);
+    try {
+      const res = await this.tasksService.find(id);
+      if (!res) {
+        throw new NotFoundException('this task does not found');
+      }
+      return res;
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   @Put(':id')
@@ -46,20 +73,39 @@ export class TasksController {
     if (id !== body.id) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-    this.tasksService.update({
-      ...body,
-      description: body.description ?? '',
-      status: body.status ?? 'yet',
-      deadline: body.deadline ?? null,
-      completedAt: null,
-      workingHours: 0,
-    });
+    try {
+      await this.tasksService.update({
+        ...body,
+        description: body.description ?? '',
+        status: body.status ?? 'yet',
+        deadline: body.deadline ?? null,
+        completedAt: null,
+        workingHours: 0,
+      });
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      } else if (err instanceof QueryFailedError) {
+        throw new InternalServerErrorException('query failed');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+
     return;
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    this.tasksService.delete(id);
+    try {
+      this.tasksService.delete(id);
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
     return;
   }
 }

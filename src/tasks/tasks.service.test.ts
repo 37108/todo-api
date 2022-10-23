@@ -84,6 +84,6 @@ describe('Tasks Service', () => {
   it('should return the tasks filtered by status', async () => {
     const result = [generateTask(), generateTask()];
     jest.spyOn(repository, 'findBy').mockImplementation(async () => result);
-    expect(await service.find('in_progress')).toBe(result);
+    expect(await service.findByStatus('in_progress')).toBe(result);
   });
 });
