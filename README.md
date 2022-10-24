@@ -17,6 +17,11 @@ $ yarn start
 # access to API definition
 http://localhost:3000/api
 
+# obtain the jwt token
+curl -X POST http://localhost:3000/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"john","password":"1q2w3e"}'
+
 # watch mode
 $ yarn start:dev
 

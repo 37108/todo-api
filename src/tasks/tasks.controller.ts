@@ -11,6 +11,8 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UseFilters,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { v4 } from 'uuid';
@@ -18,13 +20,16 @@ import { Task } from './tasks.entity';
 import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
 import { TasksService } from './tasks.service';
 import { QueryFailedExceptionFilter } from './tasks.filter';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 @Controller('tasks')
+@UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  async findAll(): Promise<Task[]> {
+  async findAll(@Request() req): Promise<Task[]> {
+    console.log(req.user);
     try {
       return this.tasksService.findAll();
     } catch (err) {
