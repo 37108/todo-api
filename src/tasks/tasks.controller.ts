@@ -7,31 +7,68 @@ import {
   Post,
   Put,
   HttpException,
-  HttpStatus,
   NotFoundException,
   InternalServerErrorException,
   UseFilters,
   Request,
   UseGuards,
+  Req,
+  BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { v4 } from 'uuid';
-import { Task } from './tasks.entity';
-import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
+import { Task } from './interfaces/tasks.entity';
+import { CreateTaskDto, UpdateTaskDto } from './interfaces/tasks.dto';
 import { TasksService } from './tasks.service';
 import { QueryFailedExceptionFilter } from './tasks.filter';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { DefaultErrorResponse } from '../libs/error.decorator';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { TaskResponse } from './interfaces/tasks.interface';
 
+@ApiTags('tasks')
+@ApiBearerAuth()
+@DefaultErrorResponse()
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-  @Get()
-  async findAll(@Request() req): Promise<Task[]> {
-    console.log(req.user);
+  private async validateOwnership(taskId: string, username: string) {
     try {
-      return this.tasksService.findAll();
+      const task = await this.tasksService.find(taskId);
+      if (!task) {
+        throw new NotFoundException('this task does not found');
+      }
+      if (task.createdBy !== username) {
+        throw new NotFoundException('this task does not found');
+      }
+      return;
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
+  @Get()
+  @ApiOkResponse({
+    type: [TaskResponse],
+  })
+  async findByUser(
+    @Request() req: { user: { username: string } },
+  ): Promise<Task[]> {
+    try {
+      return this.tasksService.findByUser(req.user.username);
     } catch (err) {
       if (err instanceof HttpException) {
         throw err;
@@ -42,11 +79,18 @@ export class TasksController {
   }
 
   @Post()
+  @ApiCreatedResponse({
+    description: 'empty response',
+  })
   @UseFilters(new QueryFailedExceptionFilter())
-  async create(@Body() body: CreateTaskDto) {
+  async create(
+    @Body() body: CreateTaskDto,
+    @Req() req: { user: { username: string } },
+  ) {
     await this.tasksService.create({
       ...body,
       id: v4(),
+      createdBy: req.user.username,
       description: body.description ?? '',
       status: body.status ?? 'yet',
       deadline: body.deadline ?? null,
@@ -57,10 +101,16 @@ export class TasksController {
   }
 
   @Get(':id')
-  async find(@Param('id') id: string): Promise<Task> {
+  @ApiOkResponse({
+    type: TaskResponse,
+  })
+  async find(
+    @Param('id') id: string,
+    @Req() req: { user: { username: string } },
+  ): Promise<TaskResponse> {
     try {
       const res = await this.tasksService.find(id);
-      if (!res) {
+      if (!res || res.createdBy !== req.user.username) {
         throw new NotFoundException('this task does not found');
       }
       return res;
@@ -74,10 +124,22 @@ export class TasksController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() body: UpdateTaskDto) {
+  @HttpCode(204)
+  @ApiResponse({
+    status: 204,
+    description: 'empty response',
+  })
+  @UseFilters(new QueryFailedExceptionFilter())
+  async update(
+    @Param('id') id: string,
+    @Body() body: UpdateTaskDto,
+    @Req() req: { user: { username: string } },
+  ) {
     if (id !== body.id) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      throw new BadRequestException();
     }
+    await this.validateOwnership(id, req.user.username);
+
     try {
       await this.tasksService.update({
         ...body,
@@ -101,7 +163,16 @@ export class TasksController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  @HttpCode(204)
+  @ApiResponse({
+    status: 204,
+    description: 'empty response',
+  })
+  async delete(
+    @Param('id') id: string,
+    @Req() req: { user: { username: string } },
+  ) {
+    await this.validateOwnership(id, req.user.username);
     try {
       this.tasksService.delete(id);
     } catch (err) {

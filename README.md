@@ -1,52 +1,26 @@
-## Description
+## Users
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| username | password |
+| -------- | -------- |
+| john     | 1q2w3e   |
+| amy      | 3e2w1q   |
 
-## Installation
+## api doc
 
-```bash
-$ yarn
-```
+http://localhost:3000/api
 
 ## Running the app
 
 ```bash
 # development
 $ yarn start
-
-# access to API definition
-http://localhost:3000/api
-
-# obtain the jwt token
-curl -X POST http://localhost:3000/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"username":"john","password":"1q2w3e"}'
-
-# watch mode
-$ yarn start:dev
-
-# production mode
-$ yarn start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ yarn test
-
-# e2e tests
-$ yarn test:e2e
-
-# test coverage
-$ yarn test:cov
 ```
 
 ## Implements
 
-- [ ] ID / PW を利用したログインを実装する
-- [ ] ユーザがタスクを作成/更新/削除 ができる
-  - [ ] タスクの一覧を取得できる
+- [x] ID / PW を利用したログインを実装する
+- [x] ユーザがタスクを作成/更新/削除 ができる
+  - [x] タスクの一覧を取得できる
   - [ ] 本日が期限のタスク一覧を取得できる
   - [ ] 終了したタスクの時間を書き込むことができる
   - [ ] 1 日の作業時間 / 1 週間の作業時間を計測できる

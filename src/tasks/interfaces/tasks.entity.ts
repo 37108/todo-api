@@ -12,7 +12,7 @@ export class Task {
   description?: string;
 
   @Column()
-  status?: string;
+  status?: 'yet' | 'in_progress' | 'done';
 
   @Column({ nullable: true })
   deadline?: Date | null;
@@ -23,10 +23,6 @@ export class Task {
   @Column()
   workingHours?: number;
 
-  // todo: sql.js does not support these column. use other logic
-  // @CreateDateColumn({ type: 'string', precision: 0 })
-  // readonly createdAt?: Date;
-
-  // @UpdateDateColumn({ type: 'string', precision: 0 })
-  // readonly updatedAt?: Date;
+  @Column({ update: false })
+  createdBy: string;
 }

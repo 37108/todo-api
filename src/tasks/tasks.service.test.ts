@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Task } from './tasks.entity';
+import { Task } from './interfaces/tasks.entity';
 import { TasksService } from './tasks.service';
 import { faker } from '@faker-js/faker';
 
@@ -14,6 +14,7 @@ function generateTask(): Task {
     deadline: faker.date.past(),
     workingHours: faker.datatype.number(),
     completedAt: faker.datatype.datetime(),
+    createdBy: faker.name.fullName(),
   };
 }
 
@@ -43,6 +44,7 @@ describe('Tasks Service', () => {
       id: task.id,
       title: task.title,
       description: task.description,
+      createdBy: task.createdBy,
     };
     jest.spyOn(repository, 'save').mockImplementation(async () => undefined);
     expect(await service.create(request)).toBe(undefined);

@@ -29,16 +29,16 @@ async function bootstrap() {
     username: 'john',
     password: '1q2w3e',
   });
+  userService.create({
+    id: 'amy_1',
+    username: 'amy',
+    password: '3e2w1q',
+  });
 
   const config = new DocumentBuilder()
     .setTitle('todo app')
     .setDescription('simple todo application')
     .setVersion('1.0.0')
-    .addTag('task')
-    .addSecurity('bearer', {
-      type: 'http',
-      scheme: 'bearer',
-    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
