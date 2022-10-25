@@ -64,9 +64,7 @@ describe('Tasks Service', () => {
   it('should delete the task', async () => {
     const task = generateTask();
     const request = task.id;
-    jest
-      .spyOn(repository, 'softDelete')
-      .mockImplementation(async () => undefined);
+    jest.spyOn(repository, 'delete').mockImplementation(async () => undefined);
     expect(await service.delete(request)).toBe(undefined);
   });
 
