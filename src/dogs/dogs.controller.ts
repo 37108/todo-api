@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { DogsService } from './dogs.service';
-import { Dog } from './dogs.entity';
+
 import { DogDto } from './dogs.dto';
+import { Dog } from './dogs.entity';
+import { DogsService } from './dogs.service';
 
 @Controller('dogs')
 export class DogsController {

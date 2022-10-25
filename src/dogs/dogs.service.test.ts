@@ -1,8 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DogsService } from './dogs.service';
+
 import { Dog } from './dogs.entity';
+import { DogsService } from './dogs.service';
 
 describe('Dogs Service', () => {
   let dogsService: DogsService;

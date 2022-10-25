@@ -6,10 +6,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from 'src/users/users.entity';
+
+import { DefaultErrorResponse } from '../libs/error.decorator';
+
+import { LoginDto } from './auth.dto';
 import { LocalAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { DefaultErrorResponse } from '../libs/error.decorator';
-import { LoginDto } from './auth.dto';
 
 class CreatedResponse {
   @ApiProperty({

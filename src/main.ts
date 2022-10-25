@@ -1,8 +1,10 @@
 import * as fs from 'fs';
-import initSqlJs from 'sql.js';
-import { NestFactory } from '@nestjs/core';
+
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import initSqlJs from 'sql.js';
+
 import { AppModule } from './app.module';
 import { UsersService } from './users/users.service';
 

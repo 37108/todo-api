@@ -16,14 +16,6 @@ import {
   BadRequestException,
   HttpCode,
 } from '@nestjs/common';
-import { QueryFailedError } from 'typeorm';
-import { v4 } from 'uuid';
-import { Task } from './interfaces/tasks.entity';
-import { CreateTaskDto, UpdateTaskDto } from './interfaces/tasks.dto';
-import { TasksService } from './tasks.service';
-import { QueryFailedExceptionFilter } from './tasks.filter';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { DefaultErrorResponse } from '../libs/error.decorator';
 import {
   ApiBearerAuth,
   ApiTags,
@@ -31,7 +23,17 @@ import {
   ApiOkResponse,
   ApiResponse,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { QueryFailedError } from 'typeorm';
+import { v4 } from 'uuid';
+
+import { DefaultErrorResponse } from '../libs/error.decorator';
+
+import { CreateTaskDto, UpdateTaskDto } from './interfaces/tasks.dto';
+import { Task } from './interfaces/tasks.entity';
 import { TaskResponse } from './interfaces/tasks.interface';
+import { QueryFailedExceptionFilter } from './tasks.filter';
+import { TasksService } from './tasks.service';
 
 @ApiTags('tasks')
 @ApiBearerAuth()
