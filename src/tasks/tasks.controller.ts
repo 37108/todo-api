@@ -10,7 +10,6 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UseFilters,
-  Request,
   UseGuards,
   Req,
   BadRequestException,
@@ -26,9 +25,9 @@ import {
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { QueryFailedError } from 'typeorm';
 import { v4 } from 'uuid';
+import { GetMeta } from '../auth/auth.decorator';
 
 import { DefaultErrorResponse } from '../libs/error.decorator';
-
 import { CreateTaskDto, UpdateTaskDto } from './interfaces/tasks.dto';
 import { Task } from './interfaces/tasks.entity';
 import { TaskResponse } from './interfaces/tasks.interface';
@@ -66,11 +65,9 @@ export class TasksController {
   @ApiOkResponse({
     type: [TaskResponse],
   })
-  async findByUser(
-    @Request() req: { user: { username: string } },
-  ): Promise<Task[]> {
+  async findByUser(@GetMeta() meta): Promise<Task[]> {
     try {
-      return this.tasksService.findByUser(req.user.username);
+      return this.tasksService.findByUser(meta.username);
     } catch (err) {
       if (err instanceof HttpException) {
         throw err;
@@ -85,14 +82,11 @@ export class TasksController {
     description: 'empty response',
   })
   @UseFilters(new QueryFailedExceptionFilter())
-  async create(
-    @Body() body: CreateTaskDto,
-    @Req() req: { user: { username: string } },
-  ) {
+  async create(@Body() body: CreateTaskDto, @GetMeta() meta) {
     await this.tasksService.create({
       ...body,
       id: v4(),
-      createdBy: req.user.username,
+      createdBy: meta.username,
       description: body.description ?? '',
       status: body.status ?? 'yet',
       deadline: body.deadline ?? null,
@@ -106,13 +100,10 @@ export class TasksController {
   @ApiOkResponse({
     type: TaskResponse,
   })
-  async find(
-    @Param('id') id: string,
-    @Req() req: { user: { username: string } },
-  ): Promise<TaskResponse> {
+  async find(@Param('id') id: string, @GetMeta() meta): Promise<TaskResponse> {
     try {
       const res = await this.tasksService.find(id);
-      if (!res || res.createdBy !== req.user.username) {
+      if (!res || res.createdBy !== meta.username) {
         throw new NotFoundException('this task does not found');
       }
       return res;
@@ -135,12 +126,12 @@ export class TasksController {
   async update(
     @Param('id') id: string,
     @Body() body: UpdateTaskDto,
-    @Req() req: { user: { username: string } },
+    @GetMeta() meta,
   ) {
     if (id !== body.id) {
       throw new BadRequestException();
     }
-    await this.validateOwnership(id, req.user.username);
+    await this.validateOwnership(id, meta.username);
 
     try {
       await this.tasksService.update({
@@ -170,11 +161,8 @@ export class TasksController {
     status: 204,
     description: 'empty response',
   })
-  async delete(
-    @Param('id') id: string,
-    @Req() req: { user: { username: string } },
-  ) {
-    await this.validateOwnership(id, req.user.username);
+  async delete(@Param('id') id: string, @GetMeta() meta) {
+    await this.validateOwnership(id, meta.username);
     try {
       this.tasksService.delete(id);
     } catch (err) {
