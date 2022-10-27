@@ -9,9 +9,9 @@ import { User } from 'src/users/users.entity';
 
 import { DefaultErrorResponse } from '../errors/error.decorator';
 
-import { LoginDto } from './auth.dto';
-import { LocalAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
+import { LocalAuthGuard } from './injectable/auth.guard';
+import { LoginDto } from './interfaces/auth.dto';
 
 class CreatedResponse {
   @ApiProperty({

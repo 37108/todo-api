@@ -21,10 +21,10 @@ import {
   ApiOkResponse,
   ApiResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from 'src/auth/injectable/auth.guard';
 import { QueryFailedError } from 'typeorm';
 import { v4 } from 'uuid';
-import { GetMeta } from '../auth/auth.decorator';
+import { GetMeta } from '../auth/injectable/auth.decorator';
 
 import { DefaultErrorResponse } from '../errors/error.decorator';
 import { CreateTaskDto, UpdateTaskDto } from './interfaces/tasks.dto';

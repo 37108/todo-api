@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { SECRET_KEY } from './auth.constants';
-import { Payload } from './jwt.strategy.interface';
+import { SECRET_KEY } from '../config/constants';
+import { Payload } from '../interfaces/jwt.interface';
 
 /**
  * Auth user by JWT token

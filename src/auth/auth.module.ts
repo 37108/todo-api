@@ -4,11 +4,11 @@ import { PassportModule } from '@nestjs/passport';
 
 import { UserModule } from '../users/users.module';
 
-import { SECRET_KEY } from './auth.constants';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './jwt.strategy';
-import { LocalStrategy } from './local.strategy';
+import { SECRET_KEY } from './config/constants';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
