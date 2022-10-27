@@ -11,7 +11,6 @@ import {
   InternalServerErrorException,
   UseFilters,
   UseGuards,
-  Req,
   BadRequestException,
   HttpCode,
 } from '@nestjs/common';
@@ -27,7 +26,7 @@ import { QueryFailedError } from 'typeorm';
 import { v4 } from 'uuid';
 import { GetMeta } from '../auth/auth.decorator';
 
-import { DefaultErrorResponse } from '../libs/error.decorator';
+import { DefaultErrorResponse } from '../errors/error.decorator';
 import { CreateTaskDto, UpdateTaskDto } from './interfaces/tasks.dto';
 import { Task } from './interfaces/tasks.entity';
 import { TaskResponse } from './interfaces/tasks.interface';
